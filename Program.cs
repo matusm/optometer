@@ -15,9 +15,11 @@ namespace optometer
 
             // defaults
             int maximumSamples = 10;
-            string port = "COM9";
             string logFileName = "optometer.log";
-            string separator = "==========================================================";
+            string port = "COM9";
+
+            // cinstants
+            const string separator = "==========================================================";
 
             if (args.Length == 1 || args.Length == 2)
                 port = args[0];
