@@ -42,10 +42,11 @@ namespace optometer
             LogAndDisplay($"DetectorID:   {device.DetectorID}");
             LogAndDisplay($"Calibration:  {device.DetectorCalibrationFactor}");
             LogAndDisplay($"Unit:         {device.DetectorPhotometricUnit}");
+            LogAndDisplay($"Samples (n):  {maximumSamples}");
             LogOnly(fatSeparator);
             DisplayOnly("");
 
-            Console.WriteLine("press any key to start a measurement - 'q' to quit");
+            DisplayOnly("press any key to start a measurement - 'q' to quit");
             while (Console.ReadKey(true).Key != ConsoleKey.Q)
             {
                 Console.WriteLine();
@@ -66,16 +67,16 @@ namespace optometer
                 double photValue = stp.AverageValue / sensitivity;
                 double photU = u / sensitivity;
 
-
                 DisplayOnly("");
-                LogOnly($"Sample started at:             {timeStamp.ToString("dd-MM-yyyy HH:mm")}");
+                LogOnly($"Sample started at:             {timeStamp.ToString("dd-MM-yyyy HH:mm:ss")}");
                 LogAndDisplay($"Average value:                 {stp.AverageValue * 1e9:F4} nA   ({device.EstimateMeasurementRange(stp.AverageValue)})");
                 LogAndDisplay($"Standard deviation:            {stdDev * 1e9:F4} nA");
                 LogAndDisplay($"Instrument uncertainty:        {uCal * 1e9:F4} nA");
                 LogAndDisplay($"Combined standard uncertainty: {u * 1e9:F4} nA");
-                LogAndDisplay($"Photometric value:             {photValue:F2} ({photU:F2}) {device.DetectorPhotometricUnit}");
+                LogAndDisplay($"Photometric value:             {photValue:F3} ({photU:F3}) {device.DetectorPhotometricUnit}");
                 LogOnly(thinSeparator);
                 DisplayOnly("");
+                DisplayOnly("press any key to start a measurement - 'q' to quit");
             }
             DisplayOnly("bye.");
             streamWriter.Close();
