@@ -11,23 +11,14 @@ namespace optometer
     {
         public static void Main(string[] args)
         {
+            const string fatSeparator = "==========================================================";
+            const string thinSeparator = "----------------------------------------------------------";
             CultureInfo.CurrentCulture = CultureInfo.InvariantCulture;
 
-            // defaults
-            int maximumSamples = 10;
-            string logFileName = "optometer.log";
-            string port = "COM5";
+            var options = new Options();
 
-            // cinstants
-            const string fatSeparator  = "==========================================================";
-            const string thinSeparator = "----------------------------------------------------------";
-            if (args.Length == 1 || args.Length == 2)
-                port = args[0];
-            if (args.Length == 2)
-                maximumSamples = int.Parse(args[1]);
-
-            var streamWriter = new StreamWriter(logFileName, true);
-            var device = new P9710(port);
+            var streamWriter = new StreamWriter(options.LogFileName, true);
+            var device = new P9710(options.Port);
             var stp = new StatisticPod("Statistics");
 
             DateTime timeStamp = DateTime.UtcNow;
@@ -35,24 +26,27 @@ namespace optometer
             DisplayOnly("");
             LogOnly(fatSeparator);
             LogAndDisplay($"{Assembly.GetExecutingAssembly().GetName().Name} {Assembly.GetExecutingAssembly().GetName().Version}");
-            LogAndDisplay($"StartTime:    {timeStamp.ToString("dd-MM-yyyy HH:mm")}");
+            LogAndDisplay($"StartTimeUTC: {timeStamp.ToString("dd-MM-yyyy HH:mm")}");
             LogAndDisplay($"Manufacturer: {device.InstrumentManufacturer}");
             LogAndDisplay($"InstrumentID: {device.InstrumentID}");
             LogAndDisplay($"Battery:      {device.InstrumentBatteryLevel} %");
             LogAndDisplay($"DetectorID:   {device.DetectorID}");
             LogAndDisplay($"Calibration:  {device.DetectorCalibrationFactor}");
             LogAndDisplay($"Unit:         {device.DetectorPhotometricUnit}");
-            LogAndDisplay($"Samples (n):  {maximumSamples}");
+            LogAndDisplay($"Samples (n):  {options.MaximumSamples}");
+            LogAndDisplay($"Comment:      {options.UserComment}");
             LogOnly(fatSeparator);
             DisplayOnly("");
 
             DisplayOnly("press any key to start a measurement - 'q' to quit");
+
             while (Console.ReadKey(true).Key != ConsoleKey.Q)
             {
-                Console.WriteLine();
+                DisplayOnly("");
                 stp.Restart();
                 timeStamp = DateTime.UtcNow;
-                while (stp.SampleSize < maximumSamples)
+
+                while (stp.SampleSize < options.MaximumSamples)
                 {
                     double current = device.GetCurrent();
                     stp.Update(current);
@@ -62,14 +56,13 @@ namespace optometer
                 double stdDev = stp.StandardDeviation;
                 double uCal = device.GetMeasurementUncertainty(stp.AverageValue);
                 double u = Math.Sqrt(stdDev * stdDev + uCal * uCal);
-
                 double sensitivity = device.DetectorCalibrationFactor;
                 double photValue = stp.AverageValue / sensitivity;
                 double photU = u / sensitivity;
 
                 DisplayOnly("");
-                LogOnly($"Sample started at:             {timeStamp.ToString("dd-MM-yyyy HH:mm:ss")}");
-                LogAndDisplay($"Average value:                 {stp.AverageValue * 1e9:F4} nA   ({device.EstimateMeasurementRange(stp.AverageValue)})");
+                LogOnly($"Sample started at:             {timeStamp:dd-MM-yyyy HH:mm:ss}");
+                LogAndDisplay($"Average value:                 {stp.AverageValue * 1e9:F4} nA  ({device.EstimateMeasurementRange(stp.AverageValue)})");
                 LogAndDisplay($"Standard deviation:            {stdDev * 1e9:F4} nA");
                 LogAndDisplay($"Instrument uncertainty:        {uCal * 1e9:F4} nA");
                 LogAndDisplay($"Combined standard uncertainty: {u * 1e9:F4} nA");
@@ -79,6 +72,12 @@ namespace optometer
                 DisplayOnly("press any key to start a measurement - 'q' to quit");
             }
             DisplayOnly("bye.");
+            LogOnly("");
+            LogOnly(fatSeparator);
+            LogOnly($"StopTimeUTC:  {timeStamp:dd-MM-yyyy HH:mm}");
+            LogOnly(fatSeparator);
+            LogOnly("");
+
             streamWriter.Close();
 
             /***************************************************/
