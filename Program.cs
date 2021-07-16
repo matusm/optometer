@@ -3,7 +3,7 @@ using System.IO;
 using System.Globalization;
 using At.Matus.StatisticPod;
 using Bev.Instruments.P9710;
-using System.Text;
+using System.Reflection;
 
 namespace optometer
 {
@@ -16,54 +16,89 @@ namespace optometer
             // defaults
             int maximumSamples = 10;
             string logFileName = "optometer.log";
-            string port = "COM9";
+            string port = "COM5";
 
             // cinstants
-            const string separator = "==========================================================";
-
+            const string fatSeparator  = "==========================================================";
+            const string thinSeparator = "----------------------------------------------------------";
             if (args.Length == 1 || args.Length == 2)
                 port = args[0];
             if (args.Length == 2)
                 maximumSamples = int.Parse(args[1]);
 
             var streamWriter = new StreamWriter(logFileName, true);
-            var stringBuilder = new StringBuilder();
             var device = new P9710(port);
             var stp = new StatisticPod("Statistics");
 
+            DateTime timeStamp = DateTime.UtcNow;
 
-            Console.WriteLine();
-            Console.WriteLine($"Manufacturer: {device.InstrumentManufacturer}");
-            Console.WriteLine($"InstrumentID: {device.InstrumentID}");
-            Console.WriteLine($"Battery:      {device.InstrumentBatteryLevel} %");
-            Console.WriteLine($"DetectorID:   {device.DetectorID}");
-            Console.WriteLine($"Calibration:  {device.DetectorCalibrationFactor}");
-            Console.WriteLine($"Unit:         {device.DetectorPhotometricUnit}");
-            Console.WriteLine();
+            DisplayOnly("");
+            LogOnly(fatSeparator);
+            LogAndDisplay($"{Assembly.GetExecutingAssembly().GetName().Name} {Assembly.GetExecutingAssembly().GetName().Version}");
+            LogAndDisplay($"StartTime:    {timeStamp.ToString("dd-MM-yyyy HH:mm")}");
+            LogAndDisplay($"Manufacturer: {device.InstrumentManufacturer}");
+            LogAndDisplay($"InstrumentID: {device.InstrumentID}");
+            LogAndDisplay($"Battery:      {device.InstrumentBatteryLevel} %");
+            LogAndDisplay($"DetectorID:   {device.DetectorID}");
+            LogAndDisplay($"Calibration:  {device.DetectorCalibrationFactor}");
+            LogAndDisplay($"Unit:         {device.DetectorPhotometricUnit}");
+            LogOnly(fatSeparator);
+            DisplayOnly("");
 
-            while (stp.SampleSize < maximumSamples)
+            Console.WriteLine("press any key to start a measurement - 'q' to quit");
+            while (Console.ReadKey(true).Key != ConsoleKey.Q)
             {
-                double current = device.GetCurrent();
-                stp.Update(current);
-                Console.WriteLine($"{stp.SampleSize,4}:   {current * 1e9:F4} nA");
+                Console.WriteLine();
+                stp.Restart();
+                timeStamp = DateTime.UtcNow;
+                while (stp.SampleSize < maximumSamples)
+                {
+                    double current = device.GetCurrent();
+                    stp.Update(current);
+                    Console.WriteLine($"{stp.SampleSize,4}:   {current * 1e9:F4} nA");
+                }
+
+                double stdDev = stp.StandardDeviation;
+                double uCal = device.GetMeasurementUncertainty(stp.AverageValue);
+                double u = Math.Sqrt(stdDev * stdDev + uCal * uCal);
+
+                double sensitivity = device.DetectorCalibrationFactor;
+                double photValue = stp.AverageValue / sensitivity;
+                double photU = u / sensitivity;
+
+
+                DisplayOnly("");
+                LogOnly($"Sample started at:             {timeStamp.ToString("dd-MM-yyyy HH:mm")}");
+                LogAndDisplay($"Average value:                 {stp.AverageValue * 1e9:F4} nA   ({device.EstimateMeasurementRange(stp.AverageValue)})");
+                LogAndDisplay($"Standard deviation:            {stdDev * 1e9:F4} nA");
+                LogAndDisplay($"Instrument uncertainty:        {uCal * 1e9:F4} nA");
+                LogAndDisplay($"Combined standard uncertainty: {u * 1e9:F4} nA");
+                LogAndDisplay($"Photometric value:             {photValue:F2} ({photU:F2}) {device.DetectorPhotometricUnit}");
+                LogOnly(thinSeparator);
+                DisplayOnly("");
             }
+            DisplayOnly("bye.");
+            streamWriter.Close();
 
-            double stdDev = stp.StandardDeviation;
-            double uCal = device.GetMeasurementUncertainty(stp.AverageValue);
-            double u = Math.Sqrt(stdDev * stdDev + uCal * uCal);
+            /***************************************************/
+            void LogAndDisplay(string line)
+            {
+                DisplayOnly(line);
+                LogOnly(line);
+            }
+            /***************************************************/
+            void LogOnly(string line)
+            {
+                streamWriter.WriteLine(line);
+                streamWriter.Flush();
+            }
+            /***************************************************/
+            void DisplayOnly(string line)
+            {
+                Console.WriteLine(line);
+            }
+            /***************************************************/
 
-            double sensitivity = device.DetectorCalibrationFactor;
-            double photValue = stp.AverageValue / sensitivity;
-            double photU = u / sensitivity;
-
-
-            Console.WriteLine();
-            Console.WriteLine($"Average value:                 {stp.AverageValue * 1e9:F4} nA   ({device.EstimateMeasurementRange(stp.AverageValue)})");
-            Console.WriteLine($"Standard deviation:            {stdDev * 1e9:F4} nA");
-            Console.WriteLine($"Instrument uncertainty:        {uCal * 1e9:F4} nA");
-            Console.WriteLine($"Combined standard uncertainty: {u * 1e9:F4} nA");
-            Console.WriteLine($"Photometric value:             {photValue:F2} ({photU:F2}) {device.DetectorPhotometricUnit}");
-            Console.WriteLine();
         }
     }
 }
