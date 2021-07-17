@@ -1,32 +1,32 @@
 ﻿using System;
-using System.IO;
 using System.Globalization;
+using System.IO;
+using System.Reflection;
 using At.Matus.StatisticPod;
 using Bev.Instruments.P9710;
-using System.Reflection;
 
 namespace optometer
 {
     class Program
     {
+        readonly static string fatSeparator = new string('=', 80);
+        readonly static string thinSeparator = new string('-', 80);
+
         public static void Main(string[] args)
         {
-            const string fatSeparator = "==========================================================";
-            const string thinSeparator = "----------------------------------------------------------";
             CultureInfo.CurrentCulture = CultureInfo.InvariantCulture;
 
-            var options = new Options();
+            DateTime timeStamp = DateTime.UtcNow;
 
+            var options = new Options();
             var streamWriter = new StreamWriter(options.LogFileName, true);
             var device = new P9710(options.Port);
             var stp = new StatisticPod("Statistics");
 
-            DateTime timeStamp = DateTime.UtcNow;
-
             DisplayOnly("");
             LogOnly(fatSeparator);
             LogAndDisplay($"{Assembly.GetExecutingAssembly().GetName().Name} {Assembly.GetExecutingAssembly().GetName().Version}");
-            LogAndDisplay($"StartTimeUTC: {timeStamp.ToString("dd-MM-yyyy HH:mm")}");
+            LogAndDisplay($"StartTimeUTC: {timeStamp:dd-MM-yyyy HH:mm}");
             LogAndDisplay($"Manufacturer: {device.InstrumentManufacturer}");
             LogAndDisplay($"InstrumentID: {device.InstrumentID}");
             LogAndDisplay($"Battery:      {device.InstrumentBatteryLevel} %");
@@ -54,19 +54,19 @@ namespace optometer
                 }
 
                 double stdDev = stp.StandardDeviation;
-                double uCal = device.GetMeasurementUncertainty(stp.AverageValue);
-                double u = Math.Sqrt(stdDev * stdDev + uCal * uCal);
+                double uSpecs = device.GetMeasurementUncertainty(stp.AverageValue);
+                double uCombined = Math.Sqrt(stdDev * stdDev + uSpecs * uSpecs);
                 double sensitivity = device.DetectorCalibrationFactor;
                 double photValue = stp.AverageValue / sensitivity;
-                double photU = u / sensitivity;
+                double photU = uCombined / sensitivity;
 
                 DisplayOnly("");
                 LogOnly($"Sample started at:             {timeStamp:dd-MM-yyyy HH:mm:ss}");
                 LogAndDisplay($"Average value:                 {stp.AverageValue * 1e9:F4} nA  ({device.EstimateMeasurementRange(stp.AverageValue)})");
                 LogAndDisplay($"Standard deviation:            {stdDev * 1e9:F4} nA");
-                LogAndDisplay($"Instrument uncertainty:        {uCal * 1e9:F4} nA");
-                LogAndDisplay($"Combined standard uncertainty: {u * 1e9:F4} nA");
-                LogAndDisplay($"Photometric value:             {photValue:F3} ({photU:F3}) {device.DetectorPhotometricUnit}");
+                LogAndDisplay($"Specification uncertainty:     {uSpecs * 1e9:F4} nA");
+                LogAndDisplay($"Combined standard uncertainty: {uCombined * 1e9:F4} nA");
+                LogAndDisplay($"Photometric value:             {photValue:F3} ± {photU:F3} {device.DetectorPhotometricUnit}");
                 LogOnly(thinSeparator);
                 DisplayOnly("");
                 DisplayOnly("press any key to start a measurement - 'q' to quit");
