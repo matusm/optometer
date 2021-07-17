@@ -35,7 +35,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="At.Matus.StatisticPod">
-      <HintPath>..\At.Matus.StatisticPod\bin\Release\At.Matus.StatisticPod.dll</HintPath>
+      <HintPath>..\At.Matus.StatisticPod\bin\Debug\At.Matus.StatisticPod.dll</HintPath>
     </Reference>
     <Reference Include="Bev.Instruments.P9710">
       <HintPath>..\Bev.Instruments.P9710\bin\Release\Bev.Instruments.P9710.dll</HintPath>

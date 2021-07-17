@@ -4,7 +4,7 @@ using CommandLine.Text;
 
 namespace optometer
 {
-    class Options
+    public class Options
     {
         [Option('p', "port", DefaultValue = "COM9", HelpText = "Serial port name.")]
         public string Port { get; set; }
