@@ -9,23 +9,18 @@ namespace optometer
 {
     class Program
     {
-        //readonly static string fatSeparator = new string('=', 80);
-        //readonly static string thinSeparator = new string('-', 80);
+        readonly static string fatSeparator = new string('=', 80);
+        readonly static string thinSeparator = new string('-', 80);
 
         public static void Main(string[] args)
         {
             CultureInfo.CurrentCulture = CultureInfo.InvariantCulture;
-            string fatSeparator = new string('=', 80);
-            string thinSeparator = new string('-', 80);
 
             DateTime timeStamp = DateTime.UtcNow;
 
             Options options = new Options();
-
-            Console.WriteLine(options.LogFileName);
-            Console.WriteLine(options.MaximumSamples);
-            Console.WriteLine(options.Port);
-            Console.WriteLine(options.UserComment);
+            if (!CommandLine.Parser.Default.ParseArgumentsStrict(args, options))
+                Console.WriteLine("*** ParseArgumentsStrict returned false");
 
             var streamWriter = new StreamWriter(options.LogFileName, true);
             var device = new P9710(options.Port);
