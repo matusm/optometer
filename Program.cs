@@ -84,7 +84,7 @@ namespace optometer
             DisplayOnly("bye.");
             LogOnly("");
             LogOnly(fatSeparator);
-            LogOnly($"StopTimeUTC:  {timeStamp:dd-MM-yyyy HH:mm}");
+            LogOnly($"{measurementIndex} measurements logged - StopTimeUTC: {timeStamp:dd-MM-yyyy HH:mm}");
             LogOnly(fatSeparator);
             LogOnly("");
 
