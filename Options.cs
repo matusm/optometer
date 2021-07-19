@@ -12,7 +12,7 @@ namespace optometer
         [Option('n', "number", DefaultValue = 10, HelpText = "Number of samples.")]
         public int MaximumSamples { get; set; }
 
-        [Option("comment", DefaultValue = "< no comment supplied >", HelpText = "User supplied comment string.")]
+        [Option("comment", DefaultValue = "---", HelpText = "User supplied comment string.")]
         public string UserComment { get; set; }
 
         [Option("logfile", DefaultValue = "optometer.log", HelpText = "Log file name.")]
