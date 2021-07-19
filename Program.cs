@@ -45,9 +45,13 @@ namespace optometer
 
             DisplayOnly("press any key to start a measurement - 'q' to quit");
 
+            int measurementIndex = 0;
+
             while (Console.ReadKey(true).Key != ConsoleKey.Q)
             {
+                measurementIndex++;
                 DisplayOnly("");
+                DisplayOnly($"Measurement #{measurementIndex}");
                 stp.Restart();
                 timeStamp = DateTime.UtcNow;
 
@@ -66,6 +70,7 @@ namespace optometer
                 double photU = uCombined / sensitivity;
 
                 DisplayOnly("");
+                LogOnly($"Measurement number:            {measurementIndex}");
                 LogOnly($"Triggered at:                  {timeStamp:dd-MM-yyyy HH:mm:ss}");
                 LogAndDisplay($"Average value:                 {stp.AverageValue * 1e9:F4} nA  ({device.EstimateMeasurementRange(stp.AverageValue)})");
                 LogAndDisplay($"Standard deviation:            {stdDev * 1e9:F4} nA");
