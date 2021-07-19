@@ -26,6 +26,8 @@ namespace optometer
             var device = new P9710(options.Port);
             var stp = new StatisticPod("Statistics");
 
+            if (options.MaximumSamples < 2) options.MaximumSamples = 2;
+
             DisplayOnly("");
             LogOnly(fatSeparator);
             LogAndDisplay($"{Assembly.GetExecutingAssembly().GetName().Name} {Assembly.GetExecutingAssembly().GetName().Version}");
@@ -64,7 +66,7 @@ namespace optometer
                 double photU = uCombined / sensitivity;
 
                 DisplayOnly("");
-                LogOnly($"Sample started at:             {timeStamp:dd-MM-yyyy HH:mm:ss}");
+                LogOnly($"Triggered at:                  {timeStamp:dd-MM-yyyy HH:mm:ss}");
                 LogAndDisplay($"Average value:                 {stp.AverageValue * 1e9:F4} nA  ({device.EstimateMeasurementRange(stp.AverageValue)})");
                 LogAndDisplay($"Standard deviation:            {stdDev * 1e9:F4} nA");
                 LogAndDisplay($"Specification uncertainty:     {uSpecs * 1e9:F4} nA");
