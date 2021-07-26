@@ -32,12 +32,10 @@ namespace optometer
             LogOnly(fatSeparator);
             LogAndDisplay($"{Assembly.GetExecutingAssembly().GetName().Name} {Assembly.GetExecutingAssembly().GetName().Version}");
             LogAndDisplay($"StartTimeUTC: {timeStamp:dd-MM-yyyy HH:mm}");
-            LogAndDisplay($"Manufacturer: {device.InstrumentManufacturer}");
-            LogAndDisplay($"InstrumentID: {device.InstrumentID}");
+            LogAndDisplay($"InstrumentID: {device.InstrumentManufacturer} {device.InstrumentID}");
             LogAndDisplay($"Battery:      {device.InstrumentBatteryLevel} %");
             LogAndDisplay($"DetectorID:   {device.DetectorID}");
-            LogAndDisplay($"Calibration:  {device.DetectorCalibrationFactor}");
-            LogAndDisplay($"Unit:         {device.DetectorPhotometricUnit}");
+            LogAndDisplay($"Calibration:  {device.DetectorCalibrationFactor} A/({device.DetectorPhotometricUnit})");
             LogAndDisplay($"Samples (n):  {options.MaximumSamples}");
             LogAndDisplay($"Comment:      {options.UserComment}");
             LogOnly(fatSeparator);
