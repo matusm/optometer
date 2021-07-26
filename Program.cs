@@ -17,6 +17,9 @@ namespace optometer
             CultureInfo.CurrentCulture = CultureInfo.InvariantCulture;
 
             DateTime timeStamp = DateTime.UtcNow;
+            string appName = Assembly.GetExecutingAssembly().GetName().Name;
+            var appVersion = Assembly.GetExecutingAssembly().GetName().Version;
+            string appVersionString = $"{appVersion.Major}.{appVersion.Minor}";
 
             Options options = new Options();
             if (!CommandLine.Parser.Default.ParseArgumentsStrict(args, options))
@@ -30,7 +33,7 @@ namespace optometer
 
             DisplayOnly("");
             LogOnly(fatSeparator);
-            LogAndDisplay($"{Assembly.GetExecutingAssembly().GetName().Name} {Assembly.GetExecutingAssembly().GetName().Version}");
+            LogAndDisplay($"{appName} {appVersionString}");
             LogAndDisplay($"StartTimeUTC: {timeStamp:dd-MM-yyyy HH:mm}");
             LogAndDisplay($"InstrumentID: {device.InstrumentManufacturer} {device.InstrumentID}");
             LogAndDisplay($"Battery:      {device.InstrumentBatteryLevel} %");
