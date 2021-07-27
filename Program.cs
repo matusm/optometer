@@ -33,8 +33,9 @@ namespace optometer
 
             DisplayOnly("");
             LogOnly(fatSeparator);
-            LogAndDisplay($"{appName} {appVersionString}");
-            LogAndDisplay($"StartTimeUTC: {timeStamp:dd-MM-yyyy HH:mm}");
+            DisplayOnly($"Application:  {appName} {appVersionString}");
+            LogOnly($"Application:  {appName} {appVersion}");
+            LogAndDisplay($"StartTimeUTC: {timeStamp:dd-MM-yyyy HH:mm}"); 
             LogAndDisplay($"InstrumentID: {device.InstrumentManufacturer} {device.InstrumentID}");
             LogAndDisplay($"Battery:      {device.InstrumentBatteryLevel} %");
             LogAndDisplay($"DetectorID:   {device.DetectorID}");
@@ -60,7 +61,7 @@ namespace optometer
                 {
                     double current = device.GetCurrent();
                     stp.Update(current);
-                    Console.WriteLine($"{stp.SampleSize,4}:   {current * 1e9:F4} nA");
+                    DisplayOnly($"{stp.SampleSize,4}:   {current * 1e9:F4} nA");
                 }
 
                 double stdDev = stp.StandardDeviation;
@@ -82,10 +83,14 @@ namespace optometer
                 DisplayOnly("");
                 DisplayOnly("press any key to start a measurement - 'q' to quit");
             }
+
             DisplayOnly("bye.");
             LogOnly("");
             LogOnly(fatSeparator);
-            LogOnly($"{measurementIndex} measurements logged - StopTimeUTC: {timeStamp:dd-MM-yyyy HH:mm}");
+            if (measurementIndex == 1)
+                LogOnly($"{measurementIndex} measurement logged - StopTimeUTC: {timeStamp:dd-MM-yyyy HH:mm}");
+            else
+                LogOnly($"{measurementIndex} measurements logged - StopTimeUTC: {timeStamp:dd-MM-yyyy HH:mm}");
             LogOnly(fatSeparator);
             LogOnly("");
 
