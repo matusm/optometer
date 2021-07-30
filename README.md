@@ -1,4 +1,4 @@
-optometer - Photo Current Logger
+optometer - A Photo Current Logger
 ================================
 
 ## Overview
@@ -13,7 +13,7 @@ Its main usage is to perform photo current measurements for a predetermined numb
 optometer [options]
 ```
 
-## Options
+### Options
 
 `--comment` : User supplied string to be included in the log file metadata.
 
@@ -23,10 +23,22 @@ optometer [options]
 
 `--logfile` : Log file name.
 
+### Examples
+
+```
+optometer -n20 -p"/dev/tty.usbserial-FTY594BQ" --comment="test-mac"
+```
+Use 20 samples per measurement, write a comment in the log file, and use the given serial port. The log file has the default name `optometer.log` and is located in the current working directory.
+
+```
+optometer --port="COM3" --logfile="C:\temp\MyLogFile.txt"
+```
+Use 10 samples per measurement (default) and use the given serial port. The full path of the log file is given. If the directory `C:\temp` does not exist, the programm will crash.
+
 
 ## Log File Entries
 
-On start the identifications and parameters of both, the instrument and the connected detector, are queried and stored. An important parameter is the detector sensitivity factor which is stored in the detector's EEPROM. This sensitivity factor is used to calculate the photometric quantity value from the measured photo current. The mesurement uncertainty of the sensitivity factor is not accessible in the EEPROM, thus the uncertainty of the photometric quantity can not be estimated. The value following the symbol ± is the standard uncertainty originating from the combined standard uncertainty as discussed below.
+On start the identifications and parameters of both, the instrument and the connected detector, are queried and logged. An important parameter is the detector sensitivity factor which is stored in the detector's EEPROM. This sensitivity factor is used to calculate the photometric quantity value from the measured photo current. The mesurement uncertainty of the sensitivity factor is not accessible in the EEPROM, thus the uncertainty of the photometric quantity can not be estimated. The value following the symbol ± is the standard uncertainty originating from the combined standard uncertainty as discussed below.
 
 * Average value: arithmetic mean of the *n* photo current readings, in nA.                 
 
