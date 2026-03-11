@@ -3,7 +3,7 @@ using System.Globalization;
 using System.IO;
 using System.Reflection;
 using At.Matus.StatisticPod;
-using Bev.Instruments.P9710;
+using At.Matus.Instruments.GO.Optometer;
 
 namespace optometer
 {

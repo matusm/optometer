@@ -34,8 +34,8 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Bev.Instruments.P9710">
-      <HintPath>..\Bev.Instruments.P9710\bin\Release\Bev.Instruments.P9710.dll</HintPath>
+    <Reference Include="At.Matus.Instruments.GO.Optometer">
+      <HintPath>..\At.Matus.Instruments.GO.Optometer\At.Matus.Instruments.GO.Optometer\bin\Release\At.Matus.Instruments.GO.Optometer.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />

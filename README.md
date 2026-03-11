@@ -60,3 +60,16 @@ Bev.Instruments.P9710: https://github.com/matusm/Bev.Instruments.P9710
 At.Matus.StatisticPod: https://github.com/matusm/At.Matus.StatisticPod
 
 CommandLineParser: https://github.com/commandlineparser/commandline 
+
+
+## Installation
+If you do not want to build the application from the source code you can use the released binaries. Just copy the .exe and the .dll files to a directory of your choice. This direcory should be included in the user's PATH variable.
+
+## Dependencies and Acknowledgments
+* [At.Matus.Instruments.GO.Optometer](https://github.com/matusm/At.Matus.Instruments.GO.Optometer)  
+* [At.Matus.StatisticPod](https://github.com/matusm/At.Matus.StatisticPod)
+* [CommandLineParser](https://github.com/commandlineparser/commandline)
+
+---
+
+**Note**: This app is not officially affiliated with or endorsed by Gigahertz-Optik GmbH.
