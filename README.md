@@ -50,16 +50,7 @@ On start the identifications and parameters of both, the instrument and the conn
 
 * Combined standard uncertainty: combination of the standard deviation and the specification uncertainty.
 
-* Photometric value: calculated value using the detector sensitivity factor
-
-
-## Dependencies
-
-Bev.Instruments.P9710: https://github.com/matusm/Bev.Instruments.P9710
-
-At.Matus.StatisticPod: https://github.com/matusm/At.Matus.StatisticPod
-
-CommandLineParser: https://github.com/commandlineparser/commandline 
+* Photometric value: calculated value using the detector sensitivity factor. 
 
 
 ## Installation
